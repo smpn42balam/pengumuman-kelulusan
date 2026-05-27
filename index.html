@@ -116,12 +116,12 @@
 
     // --- DATA SISWA INITIAL (CADANGAN SEBAGAI DATA BAWAAN PERTAMA KALI) ---
     const INITIAL_STUDENTS = [
-      { id: 1, nisn: "0012345678", noPeserta: "26-02-042-001-8", name: "Budi Santoso", kelas: "IX A", nilaiMat: 85, nilaiInd: 90, status: "LULUS" },
-      { id: 2, nisn: "0012345679", noPeserta: "26-02-042-002-9", name: "Siti Aminah", kelas: "IX B", nilaiMat: 78, nilaiInd: 88, status: "LULUS" },
-      { id: 3, nisn: "0012345680", noPeserta: "26-02-042-003-4", name: "Andi Wijaya", kelas: "IX C", nilaiMat: 45, nilaiInd: 60, status: "TIDAK LULUS" },
-      { id: 4, nisn: "0012345681", noPeserta: "26-02-042-004-5", name: "Rina Melati", kelas: "IX A", nilaiMat: 92, nilaiInd: 94, status: "LULUS" },
-      { id: 5, nisn: "0012345682", noPeserta: "26-02-042-005-6", name: "Dimas Anggara", kelas: "IX B", nilaiMat: 70, nilaiInd: 75, status: "DITUNDA" },
-      { id: 6, nisn: "12345", noPeserta: "26-02-042-999-X", name: "Siswa Uji Coba Sistem", kelas: "IX Admin", nilaiMat: 100, nilaiInd: 100, status: "LULUS" } 
+      { id: 1, nisn: "0012345678", noPeserta: "26-02-042-001-8", name: "Budi Santoso", kelas: "IX A", nilaiMat: 85.00, nilaiInd: 90.00, status: "LULUS" },
+      { id: 2, nisn: "0012345679", noPeserta: "26-02-042-002-9", name: "Siti Aminah", kelas: "IX B", nilaiMat: 78.50, nilaiInd: 88.00, status: "LULUS" },
+      { id: 3, nisn: "0012345680", noPeserta: "26-02-042-003-4", name: "Andi Wijaya", kelas: "IX C", nilaiMat: 45.25, nilaiInd: 60.00, status: "TIDAK LULUS" },
+      { id: 4, nisn: "0012345681", noPeserta: "26-02-042-004-5", name: "Rina Melati", kelas: "IX A", nilaiMat: 92.00, nilaiInd: 94.75, status: "LULUS" },
+      { id: 5, nisn: "0012345682", noPeserta: "26-02-042-005-6", name: "Dimas Anggara", kelas: "IX B", nilaiMat: 70.00, nilaiInd: 75.50, status: "DITUNDA" },
+      { id: 6, nisn: "12345", noPeserta: "26-02-042-999-X", name: "Siswa Uji Coba Sistem", kelas: "IX Admin", nilaiMat: 100.00, nilaiInd: 100.00, status: "LULUS" } 
     ];
 
     // Waktu Rilis Resmi: 1 Juni 2026 pkl. 23.59 WIB
@@ -131,6 +131,13 @@
     // ⚠️ PENTING: Ganti URL di bawah ini dengan "URL Aplikasi Web" hasil deploy Anda!
     // =========================================================================
     const GAS_URL = "https://script.google.com/macros/s/AKfycbygwOfNulkZNYMUGlgI71iwxsBhoXcQbrqb58QArQgYE4GSXnqzK96f1QbGxc5pVawe/exec"; 
+
+    // --- HELPER UNTUK FORMAT DESIMAL 2 ANGKA DI BELAKANG KOMA ---
+    const formatDesimal = (nilai) => {
+      if (nilai === undefined || nilai === null || nilai === "") return "-";
+      const parsed = parseFloat(nilai);
+      return isNaN(parsed) ? "-" : parsed.toFixed(2);
+    };
 
     // --- TOAST COMPONENT ---
     const Toast = ({ toast }) => {
@@ -246,7 +253,7 @@
       </div>
     );
 
-    // --- CEK KELULUSAN PAGE (DENGAN TAMPILAN NOMOR PESERTA DAN NILAI INTERAKTIF) ---
+    // --- CEK KELULUSAN PAGE (DENGAN TAMPILAN NOMOR PESERTA DAN NILAI DESIMAL 2 ANGKA) ---
     const CekKelulusanPage = ({ handleSearch, searchQuery, setSearchQuery, searchResult, downloadQR }) => (
       <div className="min-h-[calc(100vh-80px)] bg-brand-50 dark:bg-brand-950 p-6 flex flex-col items-center pt-12 relative overflow-hidden transition-colors duration-300">
         <div className="absolute top-10 left-10 w-72 h-72 bg-brand-800/5 dark:bg-brand-800/10 rounded-full filter blur-[80px] pointer-events-none"></div>
@@ -293,7 +300,7 @@
             </div>
           )}
           
-          {/* TAMPILAN BARU HASIL NILAI DAN NOMOR PESERTA */}
+          {/* TAMPILAN HASIL NILAI DESIMAL 2 ANGKA */}
           {typeof searchResult === 'object' && searchResult !== null && (
             <div className="bg-white dark:bg-brand-900/50 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-2xl border-t-[10px] border-brand-600 border-x border-b border-slate-200 dark:border-brand-800 relative overflow-hidden">
               <div className="flex flex-col md:flex-row gap-8 items-center">
@@ -320,11 +327,11 @@
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="bg-emerald-500/10 border border-emerald-500/20 dark:bg-emerald-500/5 dark:border-emerald-500/10 p-4 rounded-3xl text-center">
                       <p className="text-[9px] text-emerald-700 dark:text-emerald-400 uppercase font-bold mb-1">Matematika</p>
-                      <p className="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">{searchResult.nilaiMat ?? '-'}</p>
+                      <p className="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">{formatDesimal(searchResult.nilaiMat)}</p>
                     </div>
                     <div className="bg-brand-500/10 border border-brand-500/20 dark:bg-brand-500/5 dark:bg-brand-500/10 p-4 rounded-3xl text-center">
                       <p className="text-[9px] text-brand-700 dark:text-brand-300 uppercase font-bold mb-1">Bahasa Indonesia</p>
-                      <p className="text-4xl font-extrabold text-brand-600 dark:text-brand-300">{searchResult.nilaiInd ?? '-'}</p>
+                      <p className="text-4xl font-extrabold text-brand-600 dark:text-brand-300">{formatDesimal(searchResult.nilaiInd)}</p>
                     </div>
                   </div>
 
@@ -379,7 +386,7 @@
     }) => {
       
       const handleDownloadTemplate = () => {
-        const csvContent = "data:text/csv;charset=utf-8,nisn,noPeserta,name,kelas,nilaiMat,nilaiInd,status\n0012345683,26-02-042-006-7,Ahmad Faisal,IX D,80,85,LULUS\n0012345684,26-02-042-007-8,Siti Rahma,IX C,40,55,TIDAK LULUS\n0012345685,26-02-042-008-9,Rian Hidayat,IX B,70,72,DITUNDA";
+        const csvContent = "data:text/csv;charset=utf-8,nisn,noPeserta,name,kelas,nilaiMat,nilaiInd,status\n0012345683,26-02-042-006-7,Ahmad Faisal,IX D,80.00,85.50,LULUS\n0012345684,26-02-042-007-8,Siti Rahma,IX C,40.00,55.00,TIDAK LULUS\n0012345685,26-02-042-008-9,Rian Hidayat,IX B,70.50,72.00,DITUNDA";
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
@@ -417,8 +424,8 @@
               noPeserta: cols[1]?.replace(/["']/g, '').trim(),
               name: cols[2]?.replace(/["']/g, '').trim(),
               kelas: cols[3]?.replace(/["']/g, '').trim(),
-              nilaiMat: parseInt(cols[4]?.trim() || "0"),
-              nilaiInd: parseInt(cols[5]?.trim() || "0"),
+              nilaiMat: parseFloat(cols[4]?.trim() || "0"),
+              nilaiInd: parseFloat(cols[5]?.trim() || "0"),
               status: cols[6]?.replace(/["']/g, '').trim().toUpperCase()
             };
 
@@ -572,8 +579,8 @@
                         <td className="p-4 font-mono font-bold text-brand-700 dark:text-brand-300">{s.noPeserta || '-'}</td>
                         <td className="p-4 font-bold text-slate-900 dark:text-white uppercase">{s.name}</td>
                         <td className="p-4 text-slate-500 dark:text-brand-400 font-semibold">{s.kelas}</td>
-                        <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{s.nilaiMat ?? 0}</td>
-                        <td className="p-4 font-bold text-brand-600 dark:text-brand-400">{s.nilaiInd ?? 0}</td>
+                        <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{formatDesimal(s.nilaiMat)}</td>
+                        <td className="p-4 font-bold text-brand-600 dark:text-brand-400">{formatDesimal(s.nilaiInd)}</td>
                         <td className="p-4">
                           <span className={`text-[9px] font-black px-3 py-1 rounded-full ${
                             s.status === 'LULUS' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
@@ -603,7 +610,7 @@
             </div>
           </div>
 
-          {/* MODAL EDIT (DENGAN NOMOR PESERTA DAN NILAI) */}
+          {/* MODAL EDIT (DENGAN NOMOR PESERTA DAN INPUT STEP NILAI DESIMAL) */}
           {editingStudent && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 dark:bg-brand-950/80 backdrop-blur-sm">
               <div className="bg-white dark:bg-brand-900/95 w-full max-w-md p-6 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-brand-800 animate-fade-in-up text-slate-800 dark:text-white">
@@ -630,11 +637,11 @@
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Nilai MTK</label>
-                      <input type="number" min="0" max="100" name="nilaiMat" defaultValue={editingStudent.nilaiMat ?? 0} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
+                      <input type="number" min="0" max="100" step="0.01" name="nilaiMat" defaultValue={editingStudent.nilaiMat ?? 0} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Nilai B.IND</label>
-                      <input type="number" min="0" max="100" name="nilaiInd" defaultValue={editingStudent.nilaiInd ?? 0} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
+                      <input type="number" min="0" max="100" step="0.01" name="nilaiInd" defaultValue={editingStudent.nilaiInd ?? 0} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
                     </div>
                   </div>
                   <div>
@@ -737,7 +744,7 @@
             // MENCEGAH DATA RESET
             // Jika spreadsheet kosong, jangan timpa data lokal yang sudah ada
             if (response.data.length === 0) {
-              showToast('Spreadsheet kosong. Data lokal tetap dipertahaman.', 'success');
+              showToast('Spreadsheet kosong. Data lokal tetap dipertahankan.', 'success');
               setIsLoadingData(false);
               return;
             }
@@ -745,8 +752,8 @@
             const formattedData = response.data.map((item, index) => ({
               id: item.id ? parseInt(item.id) : Date.now() + index,
               noPeserta: item.noPeserta || `26-02-042-0${index + 10}-1`,
-              nilaiMat: parseInt(item.nilaiMat || "0"),
-              nilaiInd: parseInt(item.nilaiInd || "0"),
+              nilaiMat: parseFloat(item.nilaiMat || "0"),
+              nilaiInd: parseFloat(item.nilaiInd || "0"),
               nisn: item.nisn ? item.nisn.toString().trim() : "",
               name: item.name || "Nama Kosong",
               kelas: item.kelas || "-",
@@ -755,7 +762,7 @@
             
             // Jaga kecocokan data pengujian
             if (!formattedData.some(s => s.nisn === "12345")) {
-              formattedData.push({ id: 99999, nisn: "12345", noPeserta: "26-02-042-999-X", name: "Siswa Uji Coba Sistem", kelas: "IX Admin", nilaiMat: 100, nilaiInd: 100, status: "LULUS" });
+              formattedData.push({ id: 99999, nisn: "12345", noPeserta: "26-02-042-999-X", name: "Siswa Uji Coba Sistem", kelas: "IX Admin", nilaiMat: 100.00, nilaiInd: 100.00, status: "LULUS" });
             }
             setStudentsData(formattedData);
             showToast('Sinkronisasi database cloud berhasil', 'success');
@@ -946,8 +953,8 @@
           nisn: formData.get('nisn'),
           noPeserta: formData.get('noPeserta'),
           kelas: formData.get('kelas'),
-          nilaiMat: parseInt(formData.get('nilaiMat') || "0"),
-          nilaiInd: parseInt(formData.get('nilaiInd') || "0"),
+          nilaiMat: parseFloat(formData.get('nilaiMat') || "0"),
+          nilaiInd: parseFloat(formData.get('nilaiInd') || "0"),
           status: formData.get('status')
         };
         const updatedList = studentsData.map(s => s.id === updatedStudent.id ? updatedStudent : s);
