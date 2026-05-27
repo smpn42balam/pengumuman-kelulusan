@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman Kelulusan & Nilai TKA - SMPN 42 Bandar Lampung</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel untuk kompilasi JSX langsung di browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#b9ddfd',
+              300: '#7cc2fd',
+              400: '#36a2fc',
+              500: '#0c85eb',
+              600: '#0066cc',
+              700: '#0252a3',
+              800: '#064686',
+              900: '#0b3b6f',
+              950: '#07264a',
+            }
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700;800;900&display=swap');
+    body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+    .footer-text { font-family: Arial, sans-serif !important; }
+    @keyframes bounce-short { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .animate-bounce-short { animation: bounce-short 0.3s ease-out; }
+    @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fade-in-up 0.5s ease-out; }
+    @media print { .no-print { display: none !important; } }
+  </style>
+</head>
+<body class="bg-brand-50 dark:bg-brand-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-300">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- ICON COMPONENTS ---
+    const SearchIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    );
+    const MoonIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    );
+    const SunIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    );
+    const MaximizeIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m15 3 6 6"/><path d="M9 21 3 15"/><path d="M21 3v6h-6"/><path d="M3 21v-6h6"/></svg>
+    );
+    const CheckCircleIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+    );
+    const XCircleIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+    );
+    const DownloadIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+    );
+    const LockIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    );
+    const LogOutIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+    );
+    const EditIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    );
+    const Trash2Icon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+    );
+    const GraduationCapIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.91a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+    );
+    const ShieldAlertIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    );
+    const Volume2Icon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+    );
+    const VolumeXIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>
+    );
+    const MenuIcon = ({ size = 24, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    );
+    const UploadIcon = ({ size = 20, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+    );
+
+    // --- DATA SISWA INITIAL (CADANGAN SEBAGAI DATA BAWAAN PERTAMA KALI) ---
+    const INITIAL_STUDENTS = [
+      { id: 1, nisn: "0012345678", noPeserta: "26-02-042-001-8", name: "Budi Santoso", kelas: "IX A", nilaiMat: 85, nilaiInd: 90, status: "LULUS" },
+      { id: 2, nisn: "0012345679", noPeserta: "26-02-042-002-9", name: "Siti Aminah", kelas: "IX B", nilaiMat: 78, nilaiInd: 88, status: "LULUS" },
+      { id: 3, nisn: "0012345680", noPeserta: "26-02-042-003-4", name: "Andi Wijaya", kelas: "IX C", nilaiMat: 45, nilaiInd: 60, status: "TIDAK LULUS" },
+      { id: 4, nisn: "0012345681", noPeserta: "26-02-042-004-5", name: "Rina Melati", kelas: "IX A", nilaiMat: 92, nilaiInd: 94, status: "LULUS" },
+      { id: 5, nisn: "0012345682", noPeserta: "26-02-042-005-6", name: "Dimas Anggara", kelas: "IX B", nilaiMat: 70, nilaiInd: 75, status: "DITUNDA" },
+      { id: 6, nisn: "12345", noPeserta: "26-02-042-999-X", name: "Siswa Uji Coba Sistem", kelas: "IX Admin", nilaiMat: 100, nilaiInd: 100, status: "LULUS" } 
+    ];
+
+    // Waktu Rilis Resmi: 1 Juni 2026 pkl. 23.59 WIB
+    const ANNOUNCEMENT_DATE = new Date("2026-06-01T23:59:00+07:00").getTime();
+
+    // =========================================================================
+    // ⚠️ PENTING: Ganti URL di bawah ini dengan "URL Aplikasi Web" hasil deploy Anda!
+    // =========================================================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbygwOfNulkZNYMUGlgI71iwxsBhoXcQbrqb58QArQgYE4GSXnqzK96f1QbGxc5pVawe/exec"; 
+
+    // --- TOAST COMPONENT ---
+    const Toast = ({ toast }) => {
+      if (!toast.show) return null;
+      return (
+        <div className={`fixed bottom-5 right-5 z-[100] flex items-center p-4 rounded-xl shadow-2xl animate-bounce-short ${toast.type === 'success' ? 'bg-brand-600' : 'bg-red-600'} text-white`}>
+          {toast.type === 'success' ? <CheckCircleIcon size={20} className="mr-2" /> : <XCircleIcon size={20} className="mr-2" />}
+          <span className="font-medium text-sm">{toast.message}</span>
+        </div>
+      );
+    };
+
+    // --- COUNTDOWN COMPONENT ---
+    const Countdown = ({ isSystemActive, ANNOUNCEMENT_DATE }) => {
+      const [t, setT] = useState({ d: 0, h: 0, m: 0, s: 0 });
+      const [isFinished, setIsFinished] = useState(false);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          const dist = ANNOUNCEMENT_DATE - new Date().getTime();
+          if (dist < 0) {
+            setIsFinished(true);
+            return clearInterval(timer);
+          }
+          setT({
+            d: Math.floor(dist / 86400000),
+            h: Math.floor((dist % 86400000) / 3600000),
+            m: Math.floor((dist % 3600000) / 60000),
+            s: Math.floor((dist % 60000) / 1000)
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [ANNOUNCEMENT_DATE]);
+
+      if (isFinished || isSystemActive) {
+        return (
+          <div className="my-10 bg-brand-600/10 dark:bg-brand-600/20 border border-brand-500/30 text-brand-600 dark:text-brand-300 px-6 py-3 rounded-2xl animate-pulse font-black uppercase text-xs md:text-sm tracking-widest no-print">
+            🎉 PENGUMUMAN SUDAH DIMULAI & DAPAT DIAKSES SEKARANG 🎉
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex justify-center space-x-3 md:space-x-4 my-10 no-print">
+          {[ {l:'Hari',v:t.d}, {l:'Jam',v:t.h}, {l:'Menit',v:t.m}, {l:'Detik',v:t.s} ].map((x,i)=>(
+            <div key={i} className="text-center">
+              <div className="w-16 h-16 md:w-24 md:h-24 bg-white dark:bg-brand-900/50 backdrop-blur rounded-2xl flex items-center justify-center border border-brand-200 dark:border-brand-700/50 mb-1.5 shadow-md dark:shadow-lg transition-colors">
+                <span className="text-2xl md:text-4xl font-extrabold text-brand-800 dark:text-brand-100">{x.v}</span>
+              </div>
+              <span className="text-[8px] md:text-[10px] uppercase font-bold text-brand-700 dark:text-brand-300 tracking-wider">{x.l}</span>
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    // --- NAVBAR ---
+    const Navbar = ({ currentPath, setCurrentPath, isDarkMode, setIsDarkMode, toggleMusic, musicPlaying, toggleFullscreen, isMobileMenuOpen, setIsMobileMenuOpen }) => (
+      <nav className="sticky top-0 z-50 bg-brand-50/95 dark:bg-brand-950/95 border-b border-brand-200 dark:border-brand-850 text-brand-950 dark:text-white px-6 h-20 flex items-center justify-between no-print shadow-md dark:shadow-none transition-colors duration-300">
+        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentPath('home')}>
+          <div className="bg-brand-600 dark:bg-brand-500 p-2.5 rounded-xl text-white shadow-lg shadow-brand-500/20"><GraduationCapIcon size={24} /></div>
+          <div>
+            <h1 className="font-extrabold text-sm md:text-lg leading-tight tracking-tight text-brand-950 dark:text-brand-100">SMPN 42</h1>
+            <p className="text-[8px] md:text-[10px] text-brand-600 dark:text-brand-300 font-bold uppercase tracking-widest">Bandar Lampung</p>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center space-x-6">
+          <button onClick={() => setCurrentPath('home')} className={`text-sm font-semibold transition-colors hover:text-brand-600 dark:hover:text-brand-300 ${currentPath === 'home' ? 'text-brand-600 dark:text-brand-300 font-bold underline underline-offset-4' : 'text-slate-600 dark:text-slate-300'}`}>Beranda</button>
+          <button onClick={() => setCurrentPath('cek')} className={`text-sm font-semibold transition-colors hover:text-brand-600 dark:hover:text-brand-300 ${currentPath === 'cek' ? 'text-brand-600 dark:text-brand-300 font-bold underline underline-offset-4' : 'text-slate-600 dark:text-slate-300'}`}>Pengumuman</button>
+          <button onClick={() => setCurrentPath('admin')} className={`text-sm font-semibold transition-colors hover:text-brand-600 dark:hover:text-brand-300 ${currentPath === 'admin' ? 'text-brand-600 dark:text-brand-300 font-bold underline underline-offset-4' : 'text-slate-600 dark:text-slate-300'}`}>Admin</button>
+          <div className="flex items-center space-x-3 border-l border-brand-200 dark:border-brand-800 pl-6">
+             <button onClick={toggleMusic} className="p-2 hover:bg-brand-100 dark:hover:bg-brand-900 rounded-full transition-colors">{musicPlaying ? <Volume2Icon size={20} className="text-brand-600 dark:text-brand-300"/> : <VolumeXIcon size={20} className="text-slate-400 dark:text-slate-500"/>}</button>
+             <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 hover:bg-brand-100 dark:hover:bg-brand-900 rounded-full text-brand-600 dark:text-brand-300 transition-colors">
+               {isDarkMode ? <SunIcon size={20}/> : <MoonIcon size={20}/>}
+             </button>
+             <button onClick={toggleFullscreen} className="p-2 hover:bg-brand-100 dark:hover:bg-brand-900 rounded-full text-brand-600 dark:text-brand-300 transition-colors"><MaximizeIcon size={20}/></button>
+          </div>
+        </div>
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 hover:bg-brand-100 dark:hover:bg-brand-900 rounded-lg text-brand-950 dark:text-white"><MenuIcon size={24}/></button>
+        {isMobileMenuOpen && (
+          <div className="absolute top-20 left-0 w-full bg-brand-50 dark:bg-brand-950 p-6 border-t border-brand-200 dark:border-brand-800 flex flex-col space-y-4 md:hidden animate-fade-in-up shadow-lg text-brand-950 dark:text-white">
+            <button onClick={() => {setCurrentPath('home'); setIsMobileMenuOpen(false)}} className="text-left py-2 border-b border-brand-100 dark:border-brand-900">Beranda</button>
+            <button onClick={() => {setCurrentPath('cek'); setIsMobileMenuOpen(false)}} className="text-left py-2 border-b border-brand-100 dark:border-brand-900">Pengumuman</button>
+            <button onClick={() => {setCurrentPath('admin'); setIsMobileMenuOpen(false)}} className="text-left py-2">Admin</button>
+            <div className="flex justify-around border-t border-brand-200 dark:border-brand-800 pt-4">
+                 <button onClick={toggleMusic} className="p-2">{musicPlaying ? <Volume2Icon size={24} className="text-brand-600 dark:text-brand-300"/> : <VolumeXIcon size={24}/>}</button>
+                 <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-brand-600 dark:text-brand-300">
+                    {isDarkMode ? <SunIcon size={24}/> : <MoonIcon size={24}/>}
+                 </button>
+            </div>
+          </div>
+        )}
+      </nav>
+    );
+
+    // --- HOME PAGE ---
+    const HomePage = ({ setCurrentPath, isSystemActive, ANNOUNCEMENT_DATE }) => (
+      <div className="min-h-[calc(100vh-80px)] bg-brand-50 dark:bg-brand-950 text-slate-800 dark:text-white flex flex-col items-center justify-center p-6 text-center relative overflow-hidden transition-colors duration-300">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-600/10 dark:bg-brand-600/20 rounded-full filter blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-sky-600/10 dark:bg-sky-600/20 rounded-full filter blur-[100px] pointer-events-none"></div>
+
+        <div className="bg-brand-500/10 dark:bg-brand-500/20 border border-brand-500/30 dark:border-brand-500/40 text-brand-600 dark:text-brand-300 px-4 py-1 rounded-full text-[10px] font-bold mb-6 tracking-wide">TA 2025/2026</div>
+        <h1 className="text-3xl md:text-6xl font-black mb-4 uppercase tracking-tighter leading-none max-w-4xl text-brand-950 dark:text-brand-100">PENGUMUMAN <span className="text-brand-600 dark:text-brand-400">KELULUSAN & NILAI TKA</span></h1>
+        <p className="max-w-2xl text-slate-600 dark:text-brand-200/80 text-xs md:text-base mb-6 leading-relaxed font-light">
+          Selamat datang di portal resmi Pengumuman Kelulusan & Nilai TKA SMP Negeri 42 Bandar Lampung Tahun Ajaran 2025/2026. Silakan cek hasil nilai ujian TKA Anda secara cepat, aman, dan mudah dengan memasukkan NISN pada kolom yang tersedia
+        </p>
+
+        <Countdown isSystemActive={isSystemActive} ANNOUNCEMENT_DATE={ANNOUNCEMENT_DATE} />
+
+        <button onClick={() => setCurrentPath('cek')} className="mt-4 bg-brand-600 text-white px-8 py-4 md:px-10 md:py-5 rounded-2xl font-black text-sm md:text-lg hover:bg-brand-500 hover:scale-105 transition-all flex items-center shadow-xl shadow-brand-600/30 dark:shadow-brand-500/50">
+          <SearchIcon className="mr-3" size={24}/> CEK NILAI TKA
+        </button>
+      </div>
+    );
+
+    // --- CEK KELULUSAN PAGE (DENGAN TAMPILAN NOMOR PESERTA DAN NILAI INTERAKTIF) ---
+    const CekKelulusanPage = ({ handleSearch, searchQuery, setSearchQuery, searchResult, downloadQR }) => (
+      <div className="min-h-[calc(100vh-80px)] bg-brand-50 dark:bg-brand-950 p-6 flex flex-col items-center pt-12 relative overflow-hidden transition-colors duration-300">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-brand-800/5 dark:bg-brand-800/10 rounded-full filter blur-[80px] pointer-events-none"></div>
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-brand-600/5 dark:bg-brand-600/10 rounded-full filter blur-[80px] pointer-events-none"></div>
+
+        <div className="w-full max-w-xl bg-white dark:bg-brand-900/40 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-brand-200 dark:border-brand-800/80 no-print relative z-10">
+          <h2 className="text-xl md:text-2xl font-bold mb-2 text-center uppercase tracking-tight text-brand-900 dark:text-brand-200">Status Kelulusan & Nilai TKA</h2>
+          <p className="text-[10px] text-slate-500 dark:text-brand-300/80 text-center mb-6 max-w-xs mx-auto">
+            Silakan masukkan NISN 10 digit valid Anda untuk melihat hasil nilai ujian dan evaluasi kelulusan kustom.
+          </p>
+          <form onSubmit={handleSearch} className="flex flex-col space-y-4">
+            <input 
+              type="text" 
+              placeholder="Masukkan NISN Anda" 
+              className="w-full p-4 md:p-5 rounded-2xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white focus:border-brand-500 outline-none transition-all font-mono text-center text-lg animate-none"
+              value={searchQuery}
+              onChange={e => {
+                const val = e.target.value;
+                if (/^\d*$/.test(val)) {
+                  setSearchQuery(val);
+                }
+              }}
+            />
+            <button disabled={searchResult === 'loading'} className="bg-brand-600 hover:bg-brand-500 text-white py-4 md:py-5 rounded-2xl font-black text-lg transition-all disabled:opacity-50 shadow-lg shadow-brand-500/20">
+              {searchResult === 'loading' ? 'MENCARI DATA...' : 'LIHAT HASIL'}
+            </button>
+          </form>
+        </div>
+
+        <div className="mt-8 w-full max-w-3xl relative z-10 animate-fade-in-up">
+          {searchResult === 'not_started' && (
+            <div className="bg-white dark:bg-brand-900/30 backdrop-blur-md p-8 rounded-3xl border border-slate-200 dark:border-brand-700/50 text-center shadow-lg">
+              <ShieldAlertIcon className="mx-auto text-amber-500 mb-4" size={40}/>
+              <h3 className="text-lg font-bold text-brand-800 dark:text-brand-300 uppercase">Pengumuman Belum Dimulai!</h3>
+              <p className="text-xs text-slate-500 dark:text-brand-400/80 mt-2 italic">Akses masuk dan pengecekan nilai baru akan dibuka secara resmi pada tanggal 1 Juni 2026 pkl. 23.59 WIB.</p>
+            </div>
+          )}
+
+          {searchResult === 'not_found' && (
+            <div className="bg-white dark:bg-brand-900/30 backdrop-blur-md p-8 rounded-3xl border border-slate-200 dark:border-brand-700/50 text-center shadow-lg">
+              <ShieldAlertIcon className="mx-auto text-red-500 mb-4" size={40}/>
+              <h3 className="text-lg font-bold text-red-600 dark:text-red-400 uppercase">Data Tidak Ditemukan</h3>
+              <p className="text-xs text-slate-500 dark:text-brand-400/80 mt-2 italic">Pastikan NISN yang dimasukkan sudah benar atau hubungi bagian kesiswaan sekolah.</p>
+            </div>
+          )}
+          
+          {/* TAMPILAN BARU HASIL NILAI DAN NOMOR PESERTA */}
+          {typeof searchResult === 'object' && searchResult !== null && (
+            <div className="bg-white dark:bg-brand-900/50 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-2xl border-t-[10px] border-brand-600 border-x border-b border-slate-200 dark:border-brand-800 relative overflow-hidden">
+              <div className="flex flex-col md:flex-row gap-8 items-center">
+                <div className="flex-1 text-center md:text-left w-full">
+                  <p className="text-[8px] text-slate-400 dark:text-brand-300 uppercase font-bold tracking-widest mb-1">PROFIL SISWA</p>
+                  <h3 className="text-2xl md:text-3xl font-black text-brand-950 dark:text-white uppercase mb-1 leading-tight">{searchResult.name}</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 mb-6">
+                    <div className="bg-slate-50 dark:bg-brand-950/80 p-3 rounded-2xl border border-slate-200 dark:border-brand-800">
+                      <p className="text-[8px] text-slate-500 dark:text-brand-400 uppercase font-bold">NISN</p>
+                      <p className="text-sm font-black font-mono text-slate-800 dark:text-white">{searchResult.nisn}</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-brand-950/80 p-3 rounded-2xl border border-slate-200 dark:border-brand-800">
+                      <p className="text-[8px] text-slate-500 dark:text-brand-400 uppercase font-bold">Nomor Peserta</p>
+                      <p className="text-sm font-black font-mono text-slate-800 dark:text-white">{searchResult.noPeserta || '-'}</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-brand-950/80 p-3 rounded-2xl border border-slate-200 dark:border-brand-800 sm:col-span-2">
+                      <p className="text-[8px] text-slate-500 dark:text-brand-400 uppercase font-bold">Kelas</p>
+                      <p className="text-sm font-black text-slate-800 dark:text-white">{searchResult.kelas}</p>
+                    </div>
+                  </div>
+
+                  <p className="text-[9px] text-slate-400 dark:text-brand-300 uppercase font-bold tracking-widest mb-2">HASIL EVALUASI NILAI</p>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 dark:bg-emerald-500/5 dark:border-emerald-500/10 p-4 rounded-3xl text-center">
+                      <p className="text-[9px] text-emerald-700 dark:text-emerald-400 uppercase font-bold mb-1">Matematika</p>
+                      <p className="text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">{searchResult.nilaiMat ?? '-'}</p>
+                    </div>
+                    <div className="bg-brand-500/10 border border-brand-500/20 dark:bg-brand-500/5 dark:bg-brand-500/10 p-4 rounded-3xl text-center">
+                      <p className="text-[9px] text-brand-700 dark:text-brand-300 uppercase font-bold mb-1">Bahasa Indonesia</p>
+                      <p className="text-4xl font-extrabold text-brand-600 dark:text-brand-300">{searchResult.nilaiInd ?? '-'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between bg-slate-50 dark:bg-brand-950/80 p-4 rounded-2xl border border-slate-200 dark:border-brand-800">
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-brand-400 uppercase">Status Kelulusan:</span>
+                    <span className={`text-xs font-black px-4 py-1.5 rounded-full ${
+                      searchResult.status === 'LULUS' ? 'bg-emerald-500 text-white' : 'bg-red-600 text-white'
+                    }`}>{searchResult.status}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center bg-slate-50 dark:bg-brand-950 p-5 rounded-3xl border border-dashed border-slate-200 dark:border-brand-800">
+                  <div className="bg-white p-2 rounded-xl shadow-lg">
+                     <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.origin + window.location.pathname + '?nisn=' + searchResult.nisn)}`}
+                      alt="QR" className="w-28 h-28 md:w-36 md:h-36"
+                    />
+                  </div>
+                  <button onClick={() => downloadQR(searchResult.nisn)} className="mt-4 text-[10px] text-brand-600 dark:text-brand-400 font-bold hover:text-brand-500 dark:hover:text-brand-300 hover:underline no-print flex items-center">
+                    <DownloadIcon size={12} className="mr-1"/> SIMPAN QR
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+
+    // --- ADMIN PAGE ---
+    const AdminPage = ({ 
+      isAdminLoggedIn, 
+      setIsAdminLoggedIn, 
+      handleAdminLogin, 
+      adminPin, 
+      setAdminPin, 
+      studentsData, 
+      syncToSpreadsheet,
+      editingStudent,
+      setEditingStudent,
+      deletingStudent,
+      setDeletingStudent,
+      updateStudent,
+      deleteStudent,
+      showToast,
+      isSaving,
+      refreshData,
+      isLoadingData,
+      resetToDefault,
+      isSystemActive,
+      setIsSystemActive
+    }) => {
+      
+      const handleDownloadTemplate = () => {
+        const csvContent = "data:text/csv;charset=utf-8,nisn,noPeserta,name,kelas,nilaiMat,nilaiInd,status\n0012345683,26-02-042-006-7,Ahmad Faisal,IX D,80,85,LULUS\n0012345684,26-02-042-007-8,Siti Rahma,IX C,40,55,TIDAK LULUS\n0012345685,26-02-042-008-9,Rian Hidayat,IX B,70,72,DITUNDA";
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Template_Nilai_SMPN42.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Template CSV Nilai berhasil diunduh', 'success');
+      };
+
+      const handleUploadCSV = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const text = evt.target.result;
+          const lines = text.split("\n").map(l => l.trim()).filter(l => l !== "");
+          
+          if (lines.length <= 1) {
+            showToast("File CSV kosong atau hanya berisi baris judul", "error");
+            return;
+          }
+
+          const separator = lines[1].includes(';') ? ';' : ',';
+          const newStudents = [];
+
+          for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(separator);
+            if (cols.length < 7) continue;
+
+            const student = {
+              id: Date.now() + i,
+              nisn: cols[0]?.replace(/["']/g, '').trim(),
+              noPeserta: cols[1]?.replace(/["']/g, '').trim(),
+              name: cols[2]?.replace(/["']/g, '').trim(),
+              kelas: cols[3]?.replace(/["']/g, '').trim(),
+              nilaiMat: parseInt(cols[4]?.trim() || "0"),
+              nilaiInd: parseInt(cols[5]?.trim() || "0"),
+              status: cols[6]?.replace(/["']/g, '').trim().toUpperCase()
+            };
+
+            if (student.nisn && student.name && student.kelas && ['LULUS', 'TIDAK LULUS', 'DITUNDA'].includes(student.status)) {
+              newStudents.push(student);
+            }
+          }
+
+          if (newStudents.length > 0) {
+            const updated = [...studentsData];
+            newStudents.forEach(newS => {
+              const idx = updated.findIndex(s => s.nisn === newS.nisn);
+              if (idx !== -1) {
+                updated[idx] = newS; // Update jika NISN sudah ada
+              } else {
+                updated.push(newS); // Tambah baru jika belum ada
+              }
+            });
+            syncToSpreadsheet(updated);
+          } else {
+            showToast("Gagal mengimpor. Format isi CSV tidak valid/salah.", "error");
+          }
+        };
+
+        reader.readAsText(file);
+        e.target.value = '';
+      };
+
+      if (!isAdminLoggedIn) {
+        return (
+          <div className="min-h-[calc(100vh-80px)] bg-brand-50 dark:bg-brand-950 flex items-center justify-center p-6 relative overflow-hidden transition-colors duration-300">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-700/5 dark:bg-brand-700/10 rounded-full filter blur-[100px] pointer-events-none"></div>
+            <div className="w-full max-w-sm bg-white dark:bg-brand-900/40 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-brand-800 animate-fade-in-up relative z-10 text-slate-800 dark:text-white">
+              <div className="text-center mb-8">
+                <div className="bg-brand-50 dark:bg-brand-950/80 border border-slate-200 dark:border-brand-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-600 dark:text-brand-400 shadow-inner"><LockIcon size={32}/></div>
+                <h2 className="text-xl font-bold uppercase tracking-tight text-brand-950 dark:text-brand-200">Admin Portal</h2>
+                <p className="text-slate-500 dark:text-brand-400 text-xs">Masukkan PIN kustom untuk manajemen data.</p>
+              </div>
+              <form onSubmit={handleAdminLogin} className="space-y-4">
+                <input 
+                  type="password" placeholder="PIN" 
+                  className="w-full p-4 rounded-2xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white text-center text-xl tracking-[0.5em] font-mono animate-none outline-none focus:border-brand-500"
+                  value={adminPin} 
+                  onChange={e => setAdminPin(e.target.value)}
+                />
+                <button className="w-full bg-brand-600 text-white py-4 rounded-2xl font-black hover:bg-brand-500 transition-all uppercase text-sm shadow-lg shadow-brand-500/30">Masuk</button>
+              </form>
+            </div>
+          </div>
+        );
+      }
+      return (
+        <div className="p-4 md:p-8 bg-brand-50 dark:bg-brand-950 min-h-[calc(100vh-80px)] transition-colors duration-300">
+          <div className="max-w-7xl mx-auto animate-fade-in-up">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+              <div>
+                <h2 className="text-2xl font-black uppercase tracking-tighter text-brand-950 dark:text-brand-100">Database & Nilai Siswa (Penyimpanan Spreadsheet Cloud)</h2>
+                <p className="text-slate-500 dark:text-brand-300 text-xs font-semibold">Total: {studentsData.length} Peserta Didik</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={refreshData} disabled={isLoadingData} className="bg-slate-200 dark:bg-brand-850 text-slate-700 dark:text-brand-300 border border-slate-300 dark:border-brand-700 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-slate-300">
+                  {isLoadingData ? "Memuat..." : "🔄 Sinkronkan Ulang"}
+                </button>
+                <button onClick={resetToDefault} className="bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-300 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-amber-500/20">
+                  ⚙️ Reset Data Lokal
+                </button>
+                <button onClick={() => setIsAdminLoggedIn(false)} className="bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-300 px-4 py-2 rounded-xl text-[10px] font-bold flex items-center hover:bg-red-500/20 uppercase tracking-widest transition-all"><LogOutIcon size={14} className="mr-2"/> Keluar</button>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-brand-900/40 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-slate-200 dark:border-brand-800 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="max-w-xl">
+                <h3 className="font-bold text-lg uppercase tracking-tight flex items-center text-brand-900 dark:text-brand-300">
+                  ⚙️ Status Akses Pengumuman Publik
+                </h3>
+                <p className="text-slate-500 dark:text-brand-400 text-xs mt-1">
+                  {isSystemActive 
+                    ? "🟢 SISTEM AKTIF: Semua data nilai & nomor peserta sudah dapat dicari secara publik oleh siswa." 
+                    : "🔴 SISTEM NON-AKTIF: Hanya NISN uji coba '12345' yang dapat diakses sebelum rilis resmi."}
+                </p>
+              </div>
+              <button 
+                onClick={() => {
+                  const nextState = !isSystemActive;
+                  setIsSystemActive(nextState);
+                  showToast(
+                    nextState 
+                      ? 'Sistem diaktifkan untuk umum' 
+                      : 'Sistem dikunci (khusus simulasi 12345)', 
+                    'success'
+                  );
+                }}
+                className={`w-full sm:w-auto px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
+                  isSystemActive 
+                    ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/30' 
+                    : 'bg-slate-200 dark:bg-brand-850 text-slate-700 dark:text-brand-300 border border-slate-300 dark:border-brand-700 hover:bg-slate-300 dark:hover:bg-brand-700'
+                }`}
+              >
+                {isSystemActive ? '🟢 AKTIF (SEMUA BISA CEK)' : '🔴 NON-AKTIF (HANYA 12345)'}
+              </button>
+            </div>
+
+            <div className="bg-white dark:bg-brand-900/40 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-slate-200 dark:border-brand-800 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h3 className="font-bold text-lg uppercase tracking-tight flex items-center text-brand-900 dark:text-brand-300">
+                  📁 Input Massal Nilai & Peserta (CSV)
+                </h3>
+                <p className="text-slate-500 dark:text-brand-400 text-xs mt-1">
+                  Unggah database siswa sekaligus beserta nomor peserta, nilai Matematika, nilai Bahasa Indonesia, dan status kelulusan langsung ke Cloud Google Spreadsheet.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                <button 
+                  onClick={handleDownloadTemplate} 
+                  className="flex-1 md:flex-none px-5 py-3 bg-brand-50 dark:bg-brand-950 hover:bg-brand-100 dark:hover:bg-brand-900 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                >
+                  📥 Unduh Template
+                </button>
+                <label className="flex-1 md:flex-none px-5 py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer text-center flex items-center justify-center shadow-lg shadow-brand-500/20">
+                  <UploadIcon className="mr-2" size={14}/> Unggah CSV
+                  <input type="file" accept=".csv" onChange={handleUploadCSV} className="hidden" />
+                </label>
+              </div>
+            </div>
+
+            {isSaving && (
+              <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-2xl text-blue-600 dark:text-blue-300 font-bold text-sm text-center animate-pulse">
+                ⏳ Sedang menyinkronkan data dengan Google Spreadsheet Cloud...
+              </div>
+            )}
+
+            <div className="bg-white dark:bg-brand-900/20 rounded-3xl shadow-xl overflow-hidden border border-slate-200 dark:border-brand-800/80">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-brand-100 dark:bg-brand-950 text-brand-900 dark:text-brand-300 uppercase text-[9px] font-bold tracking-[0.2em] border-b border-brand-200 dark:border-brand-900">
+                    <tr>
+                      <th className="p-4">NISN</th>
+                      <th className="p-4">No. Peserta</th>
+                      <th className="p-4">Nama</th>
+                      <th className="p-4">Kelas</th>
+                      <th className="p-4">MTK</th>
+                      <th className="p-4">B. IND</th>
+                      <th className="p-4">Status</th>
+                      <th className="p-4 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-brand-900/60">
+                    {studentsData.map(s => (
+                      <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-brand-900/20 transition-colors">
+                        <td className="p-4 font-mono text-slate-600 dark:text-brand-300">{s.nisn}</td>
+                        <td className="p-4 font-mono font-bold text-brand-700 dark:text-brand-300">{s.noPeserta || '-'}</td>
+                        <td className="p-4 font-bold text-slate-900 dark:text-white uppercase">{s.name}</td>
+                        <td className="p-4 text-slate-500 dark:text-brand-400 font-semibold">{s.kelas}</td>
+                        <td className="p-4 font-bold text-emerald-600 dark:text-emerald-400">{s.nilaiMat ?? 0}</td>
+                        <td className="p-4 font-bold text-brand-600 dark:text-brand-400">{s.nilaiInd ?? 0}</td>
+                        <td className="p-4">
+                          <span className={`text-[9px] font-black px-3 py-1 rounded-full ${
+                            s.status === 'LULUS' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
+                          }`}>{s.status}</span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex justify-center gap-1">
+                            <button 
+                              onClick={() => setEditingStudent(s)}
+                              className="p-2 text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 hover:bg-slate-100 dark:hover:bg-brand-900 rounded-lg transition-all"
+                            >
+                              <EditIcon size={16}/>
+                            </button>
+                            <button 
+                              onClick={() => setDeletingStudent(s)}
+                              className="p-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 hover:bg-slate-100 dark:hover:bg-brand-900 rounded-lg transition-all"
+                            >
+                              <Trash2Icon size={16}/>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* MODAL EDIT (DENGAN NOMOR PESERTA DAN NILAI) */}
+          {editingStudent && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 dark:bg-brand-950/80 backdrop-blur-sm">
+              <div className="bg-white dark:bg-brand-900/95 w-full max-w-md p-6 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-brand-800 animate-fade-in-up text-slate-800 dark:text-white">
+                <h3 className="text-lg font-black uppercase mb-4 border-b border-slate-200 dark:border-brand-800 pb-3 text-brand-950 dark:text-brand-300">Edit Profil & Nilai Siswa</h3>
+                <form onSubmit={updateStudent} className="space-y-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Nama Lengkap</label>
+                    <input name="name" defaultValue={editingStudent.name} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 uppercase focus:border-brand-500 outline-none" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">NISN</label>
+                      <input name="nisn" defaultValue={editingStudent.nisn} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 font-mono focus:border-brand-500 outline-none" required />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Nomor Peserta</label>
+                      <input name="noPeserta" defaultValue={editingStudent.noPeserta} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 font-mono focus:border-brand-500 outline-none" placeholder="Contoh: 26-02-..." required />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Kelas</label>
+                      <input name="kelas" defaultValue={editingStudent.kelas} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Nilai MTK</label>
+                      <input type="number" min="0" max="100" name="nilaiMat" defaultValue={editingStudent.nilaiMat ?? 0} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Nilai B.IND</label>
+                      <input type="number" min="0" max="100" name="nilaiInd" defaultValue={editingStudent.nilaiInd ?? 0} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 focus:border-brand-500 outline-none" required />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 dark:text-brand-400 uppercase">Status Kelulusan</label>
+                    <select name="status" defaultValue={editingStudent.status} className="w-full p-3 rounded-xl border-2 bg-slate-50 dark:bg-brand-950/80 border-slate-200 dark:border-brand-800 text-slate-800 dark:text-white mt-1 font-bold focus:border-brand-500 outline-none">
+                      <option value="LULUS">LULUS</option>
+                      <option value="TIDAK LULUS">TIDAK LULUS</option>
+                      <option value="DITUNDA">DITUNDA</option>
+                    </select>
+                  </div>
+                  <div className="flex gap-2 pt-4">
+                    <button type="button" onClick={() => setEditingStudent(null)} className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-brand-950 rounded-xl transition-all border border-slate-200 dark:border-brand-800">BATAL</button>
+                    <button type="submit" className="flex-1 py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-500 shadow-lg shadow-brand-500/30 transition-all">SIMPAN PERUBAHAN</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* MODAL HAPUS */}
+          {deletingStudent && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 dark:bg-brand-950/80 backdrop-blur-sm">
+              <div className="bg-white dark:bg-brand-900/95 w-full max-w-xs p-6 rounded-[2rem] text-center shadow-2xl border border-slate-200 dark:border-brand-800 text-slate-850 dark:text-white">
+                <div className="bg-red-500/10 border border-red-500/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+                  <Trash2Icon size={30}/>
+                </div>
+                <h3 className="text-sm font-black uppercase mb-2">Konfirmasi Hapus</h3>
+                <p className="text-[10px] text-slate-500 dark:text-brand-400 mb-6">Anda yakin ingin menghapus data <b>{deletingStudent.name}</b>? Tindakan ini tidak dapat dibatalkan.</p>
+                <div className="flex gap-2">
+                  <button onClick={() => setDeletingStudent(null)} className="flex-1 py-2 text-slate-500 dark:text-brand-400 font-bold hover:bg-slate-100 dark:hover:bg-brand-950 rounded-lg border border-slate-200 dark:border-brand-800">BATAL</button>
+                  <button onClick={deleteStudent} className="flex-1 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700">HAPUS</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // --- MAIN REACT COMPONENT ---
+    function App() {
+      const [currentPath, setCurrentPath] = useState('home');
+      const [isDarkMode, setIsDarkMode] = useState(false);
+      const [isFullscreen, setIsFullscreen] = useState(false);
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+      const [musicPlaying, setMusicPlaying] = useState(false);
+      
+      const [searchQuery, setSearchQuery] = useState('');
+      const [searchResult, setSearchResult] = useState(null); 
+      
+      const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+      const [adminPin, setAdminPin] = useState('');
+      
+      const [isSystemActive, setIsSystemActive] = useState(() => {
+        return localStorage.getItem('isSystemActive') === 'true';
+      });
+
+      // Load awal data dari LocalStorage agar tetap memiliki data instan
+      const [studentsData, setStudentsData] = useState(() => {
+        const saved = localStorage.getItem('smpn42_students_data');
+        return saved ? JSON.parse(saved) : INITIAL_STUDENTS;
+      });
+
+      const [editingStudent, setEditingStudent] = useState(null);
+      const [deletingStudent, setDeletingStudent] = useState(null);
+      const [isLoadingData, setIsLoadingData] = useState(false);
+      const [isSaving, setIsSaving] = useState(false);
+
+      const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+      const audioRef = useRef(null);
+      const hasAutoSearched = useRef(false);
+
+      // Simpan data otomatis ke localStorage setiap ada perubahan lokal
+      useEffect(() => {
+        localStorage.setItem('smpn42_students_data', JSON.stringify(studentsData));
+      }, [studentsData]);
+
+      useEffect(() => {
+        localStorage.setItem('isSystemActive', isSystemActive);
+      }, [isSystemActive]);
+
+      // AMBIL DATA DARI SPREADSHEET (JSONP Bypass CORS 100%)
+      const refreshData = () => {
+        if (!GAS_URL || GAS_URL.includes("Ganti URL") || GAS_URL === "") {
+          showToast('Menggunakan Database Lokal', 'success');
+          return;
+        }
+
+        setIsLoadingData(true);
+
+        if (window.handleGoogleAppsScriptResponse) {
+          delete window.handleGoogleAppsScriptResponse;
+        }
+
+        // Callback Global untuk menangkap respon JSONP
+        window.handleGoogleAppsScriptResponse = (response) => {
+          if (response && response.status === 'success' && Array.isArray(response.data)) {
+            
+            // MENCEGAH DATA RESET
+            // Jika spreadsheet kosong, jangan timpa data lokal yang sudah ada
+            if (response.data.length === 0) {
+              showToast('Spreadsheet kosong. Data lokal tetap dipertahaman.', 'success');
+              setIsLoadingData(false);
+              return;
+            }
+
+            const formattedData = response.data.map((item, index) => ({
+              id: item.id ? parseInt(item.id) : Date.now() + index,
+              noPeserta: item.noPeserta || `26-02-042-0${index + 10}-1`,
+              nilaiMat: parseInt(item.nilaiMat || "0"),
+              nilaiInd: parseInt(item.nilaiInd || "0"),
+              nisn: item.nisn ? item.nisn.toString().trim() : "",
+              name: item.name || "Nama Kosong",
+              kelas: item.kelas || "-",
+              status: item.status || "LULUS"
+            }));
+            
+            // Jaga kecocokan data pengujian
+            if (!formattedData.some(s => s.nisn === "12345")) {
+              formattedData.push({ id: 99999, nisn: "12345", noPeserta: "26-02-042-999-X", name: "Siswa Uji Coba Sistem", kelas: "IX Admin", nilaiMat: 100, nilaiInd: 100, status: "LULUS" });
+            }
+            setStudentsData(formattedData);
+            showToast('Sinkronisasi database cloud berhasil', 'success');
+          } else {
+            showToast('Gagal memuat database cloud, menggunakan data lokal cadangan.', 'error');
+          }
+          setIsLoadingData(false);
+          const scriptElement = document.getElementById('gas-jsonp-script');
+          if (scriptElement) scriptElement.remove();
+        };
+
+        const script = document.createElement('script');
+        script.id = 'gas-jsonp-script';
+        script.src = `${GAS_URL}?action=getData&callback=handleGoogleAppsScriptResponse&ts=${Date.now()}`;
+        script.onerror = () => {
+          showToast('Koneksi Cloud dibatasi. Menggunakan database lokal.', 'error');
+          setIsLoadingData(false);
+        };
+        document.body.appendChild(script);
+      };
+
+      useEffect(() => {
+        refreshData();
+      }, []);
+
+      // INTEGRASI UTAMA setDatabase: SINKRONISASI CLOUD OTOMATIS
+      const syncToSpreadsheet = (updatedStudentsList) => {
+        // Simpan langsung di state lokal terlebih dahulu
+        setStudentsData(updatedStudentsList);
+
+        if (!GAS_URL || GAS_URL.includes("Ganti URL") || GAS_URL === "") {
+          showToast('Data diperbarui di database lokal browser.', 'success');
+          return;
+        }
+
+        setIsSaving(true);
+        
+        // Buat muatan data URLSearchParams (x-www-form-urlencoded) demi menghindari Preflight OPTIONS CORS
+        const params = new URLSearchParams();
+        params.append('action', 'setDatabase');
+        params.append('students', JSON.stringify(updatedStudentsList));
+
+        fetch(GAS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+          },
+          mode: "no-cors", // Sangat penting untuk meloloskan request POST dari iframe sandboxed
+          body: params.toString()
+        })
+        .then(() => {
+          showToast('Sinkronisasi massal dengan Spreadsheet berhasil!', 'success');
+        })
+        .catch((error) => {
+          showToast('Gagal menyimpan data ke Cloud Spreadsheet', 'error');
+          console.error(error);
+        })
+        .finally(() => setIsSaving(false));
+      };
+
+      // AUTO-SEARCH QR CODE PARAMETER DENGAN PARAMETER KHUSUS
+      useEffect(() => {
+        if (hasAutoSearched.current || studentsData.length === 0) return;
+        const params = new URLSearchParams(window.location.search);
+        const nisnParam = params.get('nisn');
+        if (nisnParam) {
+          hasAutoSearched.current = true;
+
+          const now = new Date().getTime();
+          const isReleased = now >= ANNOUNCEMENT_DATE || isSystemActive;
+
+          if (!isReleased && nisnParam !== '12345') {
+            showToast('Pengumuman Belum Dimulai!', 'error');
+            setCurrentPath('cek');
+            setSearchResult('not_started');
+            return;
+          }
+
+          setSearchQuery(nisnParam);
+          setCurrentPath('cek');
+          setSearchResult('loading');
+          setTimeout(() => {
+            const result = studentsData.find(s => s.nisn === nisnParam);
+            setSearchResult(result || 'not_found');
+          }, 800);
+        }
+      }, [studentsData, isSystemActive]);
+
+      useEffect(() => {
+        if (isDarkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      }, [isDarkMode]);
+
+      const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+      };
+
+      const toggleFullscreen = () => {
+        try {
+          if (!document.fullscreenEnabled) {
+            showToast('Layar penuh dibatasi oleh kebijakan keamanan browser', 'error');
+            return;
+          }
+          if (!document.fullscreenElement) {
+            const req = document.documentElement.requestFullscreen();
+            if (req && typeof req.catch === 'function') {
+              req.then(() => setIsFullscreen(true))
+                 .catch(() => {
+                   showToast('Gagal mengaktifkan layar penuh', 'error');
+                   setIsFullscreen(false);
+                 });
+            } else {
+              setIsFullscreen(true);
+            }
+          } else {
+            const exit = document.exitFullscreen();
+            if (exit && typeof exit.catch === 'function') {
+              exit.then(() => setIsFullscreen(false))
+                  .catch(() => {
+                    setIsFullscreen(false);
+                  });
+            } else {
+              setIsFullscreen(false);
+            }
+          }
+        } catch (error) {
+          showToast('Fitur layar penuh tidak didukung di lingkungan ini', 'error');
+          setIsFullscreen(false);
+        }
+      };
+
+      const toggleMusic = () => {
+        if (musicPlaying) audioRef.current?.pause();
+        else audioRef.current?.play().catch(() => {});
+        setMusicPlaying(!musicPlaying);
+      };
+
+      const handleSearch = (e) => {
+        e.preventDefault();
+        if (!searchQuery.trim()) return showToast('Masukkan NISN', 'error');
+
+        const now = new Date().getTime();
+        const isReleased = now >= ANNOUNCEMENT_DATE || isSystemActive;
+
+        if (!isReleased && searchQuery.trim() !== '12345') {
+          showToast('Pengumuman Belum Dimulai!', 'error');
+          setSearchResult('not_started');
+          return;
+        }
+
+        setSearchResult('loading');
+        setTimeout(() => {
+          const result = studentsData.find(s => s.nisn === searchQuery.trim());
+          setSearchResult(result || 'not_found');
+          if (result) showToast('Data nilai berhasil ditemukan!', 'success');
+        }, 800);
+      };
+
+      const handleAdminLogin = (e) => {
+        e.preventDefault();
+        if (adminPin.trim() === '42bersama') {
+          setIsAdminLoggedIn(true);
+          showToast('Login Berhasil', 'success');
+        } else showToast('PIN Salah', 'error');
+      };
+
+      // Reset data ke template default bawaan sistem
+      const resetToDefault = () => {
+        if (confirm("Apakah Anda yakin ingin menyetel ulang database kembali ke data default bawaan? Data cloud spreadsheet juga akan otomatis diperbarui.")) {
+          syncToSpreadsheet(INITIAL_STUDENTS);
+        }
+      };
+
+      const deleteStudent = () => {
+        if (!deletingStudent) return;
+        const updated = studentsData.filter(s => s.id !== deletingStudent.id);
+        syncToSpreadsheet(updated);
+        setDeletingStudent(null);
+      };
+
+      const updateStudent = (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const updatedStudent = {
+          ...editingStudent,
+          name: formData.get('name'),
+          nisn: formData.get('nisn'),
+          noPeserta: formData.get('noPeserta'),
+          kelas: formData.get('kelas'),
+          nilaiMat: parseInt(formData.get('nilaiMat') || "0"),
+          nilaiInd: parseInt(formData.get('nilaiInd') || "0"),
+          status: formData.get('status')
+        };
+        const updatedList = studentsData.map(s => s.id === updatedStudent.id ? updatedStudent : s);
+        syncToSpreadsheet(updatedList);
+        setEditingStudent(null);
+      };
+
+      const downloadQR = (nisn) => {
+        const baseUrl = window.location.origin + window.location.pathname;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(baseUrl + '?nisn=' + nisn)}`;
+        fetch(qrUrl).then(res => res.blob()).then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `QR_${nisn}.png`;
+          a.click();
+        });
+      };
+
+      return (
+        <div className="bg-brand-50 dark:bg-brand-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-300">
+          <audio ref={audioRef} loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=ambient-piano-amp-strings-10711.mp3" />
+          <Toast toast={toast} />
+          <Navbar 
+            currentPath={currentPath} 
+            setCurrentPath={setCurrentPath} 
+            isDarkMode={isDarkMode} 
+            setIsDarkMode={setIsDarkMode} 
+            toggleMusic={toggleMusic} 
+            musicPlaying={musicPlaying} 
+            toggleFullscreen={toggleFullscreen} 
+            isMobileMenuOpen={isMobileMenuOpen} 
+            setIsMobileMenuOpen={setIsMobileMenuOpen} 
+          />
+          <main className="flex-grow">
+            {currentPath === 'home' && (
+              <HomePage 
+                setCurrentPath={setCurrentPath} 
+                isSystemActive={isSystemActive}
+                ANNOUNCEMENT_DATE={ANNOUNCEMENT_DATE}
+              />
+            )}
+            {currentPath === 'cek' && (
+              <CekKelulusanPage 
+                handleSearch={handleSearch} 
+                searchQuery={searchQuery} 
+                setSearchQuery={setSearchQuery} 
+                searchResult={searchResult} 
+                downloadQR={downloadQR} 
+              />
+            )}
+            {currentPath === 'admin' && (
+              <AdminPage 
+                isAdminLoggedIn={isAdminLoggedIn} 
+                setIsAdminLoggedIn={setIsAdminLoggedIn}
+                handleAdminLogin={handleAdminLogin} 
+                adminPin={adminPin} 
+                setAdminPin={setAdminPin} 
+                studentsData={studentsData} 
+                syncToSpreadsheet={syncToSpreadsheet}
+                editingStudent={editingStudent}
+                setEditingStudent={setEditingStudent}
+                deletingStudent={deletingStudent}
+                setDeletingStudent={setDeletingStudent}
+                updateStudent={updateStudent}
+                deleteStudent={deleteStudent}
+                showToast={showToast}
+                isSaving={isSaving}
+                refreshData={refreshData}
+                isLoadingData={isLoadingData}
+                resetToDefault={resetToDefault}
+                isSystemActive={isSystemActive}
+                setIsSystemActive={setIsSystemActive}
+              />
+            )}
+          </main>
+          <footer className="p-8 bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-400 text-[10px] text-center border-t border-brand-200 dark:border-brand-900 no-print tracking-widest font-medium footer-text transition-colors duration-300">
+            © 2026 SMP Negeri 42 Bandar Lampung • Official Studiolpg Creative
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
